@@ -1,0 +1,158 @@
+#!/bin/bash
+source .conf
+source docker/.conf
+
+log() {
+	echo "$(date '+%Y-%m-%d %H:%M:%S') $@" >>$logfile
+	echo $@
+}
+
+usage() {
+	cat <<EOF
+Usage: [Rebuild=1] ./build <Target> <Version> [Path]
+Example: Rebuild=1 ./build mediatek_mt7623 19.07.2
+
+Target: target_subtarget
+    example: mediatek_mt7623 x86_64 ...
+
+Version:
+    17.01.1 - 17.01.7
+    18.06.0 - 18.06.9
+    19.07.0 - 19.07.10
+    21.02.0 - 21.02.7
+    22.03.0 - 22.03.5
+    23.05.0
+    example: 19.07.2 21.02.3
+
+Path(optional): absolute path, default openwrt_subtarget_version
+
+Rebuild: means rebuild, when set 1, will rebuild
+EOF
+	exit 1
+}
+
+check_input_valid() {
+    wget -O /dev/null ${config_url} > /dev/null 2>&1 || {
+        log "openwrt ${Version} not support for ${target} ${subtarget}"
+        exit 1
+    }
+}
+
+init_compile_path() {
+    [ -e $Path ] && {
+        log "$Path already exist, Please change Path"
+        exit 1
+    }
+}
+
+init_docker() {
+    docker images | grep ${IMAGE_NAME} | grep ${TAG} || {
+        cd docker
+        ./create_docker_image.sh || {
+            log "build docker image failed, exit"
+            exit 1
+        }
+        cd -
+    }
+}
+
+clone_repo() {
+    git clone -b v${Version} --single-branch $openwrt_repo $Path || {
+        log "git clone $Path fail, exit" 
+        exit 1
+    }
+}
+
+docker_cmd() {
+    docker exec -i ${container} $@ || {
+        log "container ${container} exec $@ fail, exit" 
+        exit 1
+    }
+}
+
+update_feed() {
+    retry=0
+    while [ 1 ]
+    do
+        [ $retry -ge 3 ] && {
+            log "times of feeds update fail more than 3, exit"
+            exit 1
+        }
+
+        if docker exec -i ${container} bash -c "./scripts/feeds update -a"; then
+            log "./scripts/feeds update success"
+        else
+            log "./scripts/feeds update fail, retry"
+            let retry=retry+1
+            continue
+        fi
+
+        if docker exec -i ${container} bash -c "./scripts/feeds install -a"; then
+            log "./scripts/feeds install success"
+            break
+        else
+            log "./scripts/feeds install fail, retry"
+        fi
+        sleep 5
+    done
+}
+
+replace_feed_src() {
+    sed -i 's/git.openwrt.org\/feed/github.com\/openwrt/g' feeds.conf.default
+    sed -i 's/git.openwrt.org\/project/github.com\/openwrt/g' feeds.conf.default
+}
+
+pre_build() {
+    cd $Path
+    replace_feed_src
+    wget -O config.buildinfo ${config_url} > /dev/null 2>&1 || {
+        log "get config failed, exit"
+        exit 1
+    }
+    cp config.buildinfo .config
+    cd -
+}
+
+create_container() {
+    docker run -dit --name ${container} -v ${Path}:/home/build/src $IMAGE_NAME:$TAG || {
+        log "create container ${container} fail, exit" 
+        exit 1
+    }
+}
+
+build() {
+    cmd="make -j1 V=s"
+    docker ps -a | grep ${container} || {
+        create_container
+    }
+    update_feed
+    docker_cmd ${cmd}
+}
+
+[ "$1" = "" ] || [ "$2" = "" ] && usage
+[ -e "./tmp" ] || mkdir tmp
+
+Target=$1
+Version=$2
+Path=$3
+container=${Target}_${Version}
+logfile=$(pwd)/tmp/build_${container}.log
+target=${Target%%_*}
+subtarget=${Target#*_}
+config_url=${target_url}${Version}/targets/${target}/${subtarget}/config.buildinfo
+[ "$Path" = "" ] && Path=$(pwd)/openwrt_${subtarget}_${Version//./_}
+
+init_docker
+check_input_valid
+[ "$Rebuild" = 1 ] || {
+    init_compile_path
+    clone_repo
+}
+pre_build
+build
+log "build ${container} success"
+
+
+
+
+

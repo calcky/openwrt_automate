@@ -1,0 +1,23 @@
+This Project is for automate build openwrt image with official default config, support all arch and multi openwrt version
+
+Usage of build:
+    [Rebuild=1] ./build <Target> <Version> [Path]
+    example: Rebuild=1 ./build mediatek_mt7623 19.07.2
+
+    Target: target_subtarget
+        example: mediatek_mt7623 x86_64 ...
+
+    Version:
+        17.01.1 - 17.01.7
+        18.06.0 - 18.06.9
+        19.07.0 - 19.07.10
+        21.02.0 - 21.02.7
+        22.03.0 - 22.03.5
+        23.05.0
+        example: 19.07.2 21.02.3
+
+    Path(optional): absolute path, default openwrt_subtarget_version
+
+    Rebuild: means rebuild, when set 1, will rebuild
+
+Depends: wget docker
