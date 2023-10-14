@@ -11,8 +11,10 @@ RUN sed -i s@/archive.ubuntu.com/@/mirrors.tuna.tsinghua.edu.cn/@g /etc/apt/sour
 
 RUN echo 'root:rocks' | chpasswd
 
-RUN buildDeps='gcc g++ subversion build-essential libncurses5-dev zlib1g-dev gawk git ccache gettext libssl-dev xsltproc zip wget python rsync python3 screen uuid-dev' \
-    && apt-get update \
+ENV buildDeps='binutils bzip2 diffutils flex gcc g++ libc-dev libz-dev make subversion perl build-essential libncurses5-dev \
+zlib1g-dev gawk git ccache gettext libssl-dev xsltproc unzip zip wget python rsync python3.7+ screen uuid-dev curl'
+
+RUN apt-get update \
     && apt-get install -y $buildDeps
 
 USER openwrt
