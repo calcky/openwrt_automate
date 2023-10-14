@@ -25,7 +25,7 @@ example: ./build -t mediatek_mt7623 -v 19.07.2 -r
         23.05.0
         example: 19.07.2 21.02.3
 
-    -p(optional): new directory(absolute path), default ./openwrt_subtarget_version
+    -p(optional) Path: new directory(absolute path), default ./openwrt_subtarget_version
     -r(optional): will rebuild, skip clone
 EOF
 	exit 1
@@ -105,11 +105,13 @@ replace_feed_src() {
 pre_build() {
     cd $Path
     replace_feed_src
-    wget -O config.buildinfo ${config_url} > /dev/null 2>&1 || {
-        log "get config failed, exit"
-        exit 1
+    [ -e .config ] || {
+        wget -O config.buildinfo ${config_url} > /dev/null 2>&1 || {
+            log "get config failed, exit"
+            exit 1
+        }
+        cp config.buildinfo .config
     }
-    cp config.buildinfo .config
     cd -
 }
 
@@ -153,7 +155,7 @@ done
 
 [ "$Target" = "" ] || [ "$Version" = "" ] && usage
 
-# initialize var
+# initialize env
 container=${Target}_${Version}
 logfile=$(pwd)/tmp/build_${container}.log
 target=${Target%%_*}
@@ -168,6 +170,8 @@ check_input_valid
     init_compile_path
     clone_repo
 }
+
+#build
 pre_build
 build
 log "build ${container} success"
