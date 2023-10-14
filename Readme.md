@@ -19,4 +19,4 @@ example: ./build -t mediatek_mt7623 -v 19.07.2 -r
     -p(optional) Path: new directory(absolute path), default ./openwrt_subtarget_version
     -r(optional): will rebuild, skip clone
 
-Depends: git wget docker
+### Depends: git wget docker
