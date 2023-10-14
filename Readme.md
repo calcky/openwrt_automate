@@ -1,4 +1,6 @@
-# This Project is for automate build openwrt image with official default config, support all arch and multi openwrt version
+# Automate Compile Openwrt
+
+### This Project is for automate build openwrt image with official default config, support all arch and multi openwrt version
 
 ### Usage: ./build -t Target -v Version -p Path -r
 example: ./build -t mediatek_mt7623 -v 19.07.2 -r

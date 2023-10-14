@@ -97,14 +97,14 @@ update_feed() {
     done
 }
 
-replace_feed_src() {
+replace_feed() {
     sed -i 's/git.openwrt.org\/feed/github.com\/openwrt/g' feeds.conf.default
     sed -i 's/git.openwrt.org\/project/github.com\/openwrt/g' feeds.conf.default
 }
 
 pre_build() {
     cd $Path
-    replace_feed_src
+    replace_feed
     [ -e .config ] || {
         wget -O config.buildinfo ${config_url} > /dev/null 2>&1 || {
             log "get config failed, exit"
@@ -123,7 +123,7 @@ create_container() {
 }
 
 build() {
-    cmd="make -j1 V=s"
+    cmd="make -j1 V=s DOWNLOAD_MIRROR=${download_mirror}"
     docker ps -a | grep ${container} || {
         create_container
     }
@@ -160,6 +160,7 @@ container=${Target}_${Version}
 logfile=$(pwd)/tmp/build_${container}.log
 target=${Target%%_*}
 subtarget=${Target#*_}
+download_mirror=$download_mirror${Version%.*}
 config_url=${target_url}${Version}/targets/${target}/${subtarget}/config.buildinfo
 [ "$Path" = "" ] && Path=$(pwd)/openwrt_${subtarget}_${Version//./_}
 [ -e "./tmp" ] || mkdir tmp
