@@ -11,8 +11,8 @@ RUN sed -i s@/archive.ubuntu.com/@/mirrors.tuna.tsinghua.edu.cn/@g /etc/apt/sour
 
 RUN echo 'root:rocks' | chpasswd
 
-ENV buildDeps='binutils bzip2 diffutils flex gcc g++ libc-dev libz-dev make subversion perl build-essential libncurses5-dev \
-zlib1g-dev gawk git ccache gettext libssl-dev xsltproc unzip zip wget python rsync python3.7+ screen uuid-dev curl'
+ENV buildDeps='binutils bzip2 diffutils flex gcc g++ libc-dev libz-dev make subversion perl build-essential libncursesw5 libncurses5-dev \
+zlib1g-dev gawk git ccache gettext libssl-dev xsltproc unzip zip wget python rsync python3.7+ screen uuid-dev curl vim'
 
 RUN apt-get update \
     && apt-get install -y $buildDeps

@@ -9,8 +9,8 @@ log() {
 
 usage() {
 	cat <<EOF
-Usage: ./build -t Target -v Version -p Path -r
-example: ./build -t mediatek_mt7623 -v 19.07.2 -r
+Usage: ./build -t Target -v Version -p Path -r -a
+example: ./build -t mediatek_mt7623 -v 19.07.2 -r -a
 
     -t Target:
         target_subtarget
@@ -27,6 +27,7 @@ example: ./build -t mediatek_mt7623 -v 19.07.2 -r
 
     -p(optional) Path: new directory(absolute path), default ./openwrt_subtarget_version
     -r(optional): will rebuild, skip clone
+    -a(optional): will accelerate download packages with github mirrors
 EOF
 	exit 1
 }
@@ -136,6 +137,7 @@ Target=
 Version=
 Path=
 Rebuild=0
+Accelerate=0
 
 # parse options
 while [ -n "$1" ]; do
@@ -144,6 +146,7 @@ while [ -n "$1" ]; do
 		-v) Version=$2; shift;;
 		-p) Path=$2; shift;;
 		-r) Rebuild=1;;
+		-a) Accelerate=1;;
 		*)
 			echo "Invalid option: $1"
             usage
@@ -160,10 +163,14 @@ container=${Target}_${Version}
 logfile=$(pwd)/tmp/build_${container}.log
 target=${Target%%_*}
 subtarget=${Target#*_}
-download_mirror=$download_mirror${Version%.*}
 config_url=${target_url}${Version}/targets/${target}/${subtarget}/config.buildinfo
 [ "$Path" = "" ] && Path=$(pwd)/openwrt_${subtarget}_${Version//./_}
 [ -e "./tmp" ] || mkdir tmp
+if [ "$Accelerate" = 1 ]; then
+    download_mirror=$download_mirror${Version%.*}
+else
+    download_mirror=
+fi
 
 init_docker
 check_input_valid
