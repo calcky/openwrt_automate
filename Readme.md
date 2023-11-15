@@ -1,4 +1,4 @@
-# Automate Compile Openwrt
+![image](https://github.com/calcky/openwrt_automate/assets/24501815/3a7d1eec-e954-49fb-b825-5dd3e3e6df47)# Automate Compile Openwrt
 
 ### This Project is for automate build openwrt image with official default config, support all arch and multi openwrt version
 
@@ -7,6 +7,7 @@
 example:
 ./build -t mediatek_mt7623 -v 19.07.2 -a
 ./build -t x86_64 -v 19.07.2 -a
+./build -t armvirt_32 -v 21.02.3 -a
 ```
     -t Target:
         target_subtarget
