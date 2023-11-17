@@ -7,7 +7,7 @@
 example:
 ./build -t mediatek_mt7623 -v 19.07.2 -r -a
 ./build -t mediatek_mt7623 -v 21.02.3 -a
-./build -t armvirt_32 -v 21.02.3 -a
+./build -t armvirt_32 -v 21.02.3 -a -j 48
 ./build -t x86_64 -v 21.02.3 -a
 ```
     -t Target:
@@ -24,6 +24,7 @@ example:
         example: 19.07.2 21.02.3
 
     -p(optional) Path: new directory(absolute path), default ./openwrt_$Target_$version
+    -j(optional) [N]: Allow N jobs at once; infinite jobs with no arg
     -r(optional): will rebuild, skip clone
     -a(optional): will accelerate download packages with github mirrors
 
