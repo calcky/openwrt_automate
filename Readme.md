@@ -5,9 +5,10 @@
 ### Usage: ./build -t Target -v Version -p Path -r -a
 ```
 example:
-./build -t mediatek_mt7623 -v 19.07.2 -a
-./build -t x86_64 -v 19.07.2 -a
+./build -t mediatek_mt7623 -v 19.07.2 -r -a
+./build -t mediatek_mt7623 -v 21.02.3 -a
 ./build -t armvirt_32 -v 21.02.3 -a
+./build -t x86_64 -v 21.02.3 -a
 ```
     -t Target:
         target_subtarget
@@ -22,7 +23,7 @@ example:
         23.05.0
         example: 19.07.2 21.02.3
 
-    -p(optional) Path: new directory(absolute path), default ./openwrt_subtarget_version
+    -p(optional) Path: new directory(absolute path), default ./openwrt_$Target_$version
     -r(optional): will rebuild, skip clone
     -a(optional): will accelerate download packages with github mirrors
 
