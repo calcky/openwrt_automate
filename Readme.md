@@ -34,3 +34,14 @@ example:
     docker images is openwrt_automate:v1
     docker container of every target_version is target_version
     Note: docker images and container will not be deleted automatically
+
+### raw cmd
+    git clone -b v21.02.3 --single-branch https://github.com/openwrt/openwrt.git src/
+    cd src/
+    sed -i 's/git.openwrt.org\/feed/github.com\/openwrt/g' feeds.conf.default
+    sed -i 's/git.openwrt.org\/project/github.com\/openwrt/g' feeds.conf.default
+    wget -O config.buildinfo  https://downloads.openwrt.org/releases/21.02.3/targets/mediatek/mt7623/config.buildinfo> /dev/null 2>&1
+    cp config.buildinfo .config
+    ./scripts/feeds update -a
+    ./scripts/feeds install -a
+    make -j40 V=s DOWNLOAD_MIRROR=https://raw.githubusercontent.com/calcky/openwrt_dl/
