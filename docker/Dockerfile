@@ -21,4 +21,8 @@ RUN useradd -ms /bin/bash ${user} \
     && echo 'root:rocks' | chpasswd \
     && echo "${user}:rocks" | chpasswd
 
+RUN chown ${user}:${user} .
+
 USER openwrt
+#COPY armvirt_32.sh /home/build/armvirt_32.sh
+#RUN cd /home/build && bash -c "/home/build/armvirt_32.sh"
