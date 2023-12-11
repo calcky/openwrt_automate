@@ -44,4 +44,4 @@ example:
     cp config.buildinfo .config
     ./scripts/feeds update -a
     ./scripts/feeds install -a
-    make -j40 V=s DOWNLOAD_MIRROR=https://raw.githubusercontent.com/calcky/openwrt_dl/
+    make -j40 V=s DOWNLOAD_MIRROR=https://raw.githubusercontent.com/calcky/openwrt_dl/21.02
