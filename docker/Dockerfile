@@ -20,7 +20,8 @@ RUN apt-get update \
 RUN useradd -ms /bin/bash ${user} \
     && adduser ${user} sudo \
     && echo 'root:rocks' | chpasswd \
-    && echo "${user}:rocks" | chpasswd
+    && echo "${user}:rocks" | chpasswd \
+    && ln -s /usr/include/x86_64-linux-gnu/asm /usr/include/asm
 
 RUN chown ${user}:${user} .
 
