@@ -9,6 +9,7 @@ example:
 ./build -t mediatek_mt7623 -v 21.02.3 -a
 ./build -t armvirt_32 -v 21.02.3 -a -j 48
 ./build -t x86_64 -v 21.02.3 -a
+./build -t armsr_armv8 -v 23.05.1 -a -j 48
 ```
     -t Target:
         target_subtarget
